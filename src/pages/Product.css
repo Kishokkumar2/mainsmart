@@ -6,14 +6,15 @@
     z-index: 1000;
     margin-left: 300px;
     
+    
    
   }
   
   /* Input box styling */
   .p1 {
-    width: 450px;
+    width: 400px;
     padding: 10px 40px 10px 10px; /* Add padding-right to make space for the icon */
-    border: 2px solid orange;
+    border: 2px solid white;
     border-radius: 20px;
     font-size: 16px;
     outline: none;
@@ -23,16 +24,18 @@
   }
   
   .p1:focus {
-    border-color:red;
+    border-color:rgba(255, 255, 255, 0.744);
   }
   
   /* Search icon styling */
   .search-icon {
     position: absolute;
-    left: 400px;
+    left: 450px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
+   
+    width: 30px;
   
   }
 

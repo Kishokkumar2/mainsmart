@@ -33,6 +33,7 @@ const Transcation = ({ address1 }) => {
       );
       if (response.data.status === "1") {
         setTransactions(response.data.result);
+        console.log(response.data.result)
       } else {
         setError("Failed to fetch transactions. Check if the address is valid.");
       }

@@ -1,59 +1,218 @@
-import { UserCheck, UserPlus, UsersIcon, UserX } from "lucide-react";
-import { motion } from "framer-motion";
-
+import React, { useState } from "react";
+import './User.css'
 import Header from "../components/common/Header";
-import StatCard from "../components/common/StatCard";
-import UsersTable from "../components/users/UsersTable";
-import UserGrowthChart from "../components/users/UserGrowthChart";
-import UserActivityHeatmap from "../components/users/UserActivityHeatmap";
-import UserDemographicsChart from "../components/users/UserDemographicsChart";
+const UserPage = () => {
+  const [address, setAddress] = useState(""); // State for the input address
+  const [data, setData] = useState(null); // State for the fetched data
+  const [error, setError] = useState(null); // State for handling errors
+  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [selectedCurrency, setSelectedCurrency] = useState("ethereum"); // State for selected currency
+    const [useradd,setUseradd] =useState("")
+  // Supported networks map
+  const networkMapping = {
+    ethereum: "ethereum",
+    bsc: "bsc",
+    polygon: "matic",
+    avalanche: "avalanche",
+    fantom: "fantom",
+  };
 
-const userStats = {
-	totalUsers: 152845,
-	newUsersToday: 243,
-	activeUsers: 98520,
-	churnRate: "2.4%",
+
+  // Function to handle the API call
+  const fetchData = async () => {
+    const network = networkMapping[selectedCurrency]; // Map selected currency to valid network
+
+    const query = `
+    query ($address: String!, $network: EthereumNetwork!) {
+      ethereum(network: $network) {
+        addressStats(address: {is: $address}) {
+          address {
+            address {
+              address
+              annotation
+            }
+            sendAmount
+            sendToCount
+            sendTxCount
+            sendToCurrencies
+            receiveAmount
+            receiveTxCount
+            receiveFromCount
+            receiveFromCurrencies
+            feeAmount
+            balance
+            firstTxAt {
+              time
+            }
+            firstTransferAt {
+              time
+            }
+            lastTxAt {
+              time
+            }
+            lastTransferAt {
+              time
+            }
+            daysWithReceived
+            daysWithSent
+            daysWithTransfers
+            daysWithTransactions
+            callTxCount
+            calledTxCount
+            otherTxCount
+          }
+        }
+      }
+    }`;
+
+    // Variables for the query
+    const variables = {
+      address: address,
+      network: network, // Set network dynamically
+    };
+
+    // API key and headers
+    const headers = {
+      "Content-Type": "application/json",
+      "X-API-KEY": "BQY6JYVGt1vYuCbeBfHquPIZ3YywKiIH",
+    };
+
+    try {
+      setLoading(true);
+      setError(null); // Clear previous errors
+      const response = await fetch("https://graphql.bitquery.io/", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          query: query,
+          variables: variables,
+        }),
+      });
+
+      if (response.ok) {
+        const jsonResponse = await response.json();
+        setData(jsonResponse.data.ethereum.addressStats[0].address); // Set the data to the correct part of the response
+      } else {
+        setError(`Error: ${response.status}`);
+      }
+    } catch (error) {
+      setError(`Error: ${error.message}`); // Fix the error handling
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handler for the form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setUseradd(address)
+    console.log(useradd)
+    if (address.trim()) {
+      fetchData(); // Trigger API call if an address is entered
+    } else {
+      setError("Please enter a valid address.");
+    }
+  };
+
+  return (
+    <div className='flex-1 overflow-auto relative z-10 bg-gray-900'>
+      	<Header title='Wallet-Status' />
+
+    <div className="cal1">
+     
+		
+      {/* Form to input the address and select network */}
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Enter Address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+
+        {/* Dropdown for selecting the cryptocurrency network */}
+        <select value={selectedCurrency}  className="selects" onChange={(e) => setSelectedCurrency(e.target.value)}>
+          <option value="ethereum">Ethereum</option>
+          <option value="bsc">Binance Smart Chain</option>
+          <option value="polygon">Polygon (Matic)</option>
+          <option value="avalanche">Avalanche</option>
+          <option value="fantom">Fantom</option>
+          {/* Add more networks based on Bitquery support */}
+        </select>
+
+        <button className="btncal"   type="submit">Search</button>
+      </form>
+
+      {/* Display error if exists */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* Display loading indicator */}
+      {loading && <p>Loading...</p>}
+
+      
+      {data && (
+  <div className="calc5">
+    <table>
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="cla6">Address</td>
+          <td>{data.address.address}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Annotation</td>
+          <td>{data.address.annotation}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Sent Amount</td>
+          <td>{data.sendAmount}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Sent To Count</td>
+          <td>{data.sendToCount}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Send Tx Count</td>
+          <td>{data.sendTxCount}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Send To Currencies</td>
+          <td>{data.sendToCurrencies}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Receive Amount</td>
+          <td>{data.receiveAmount}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Receive Tx Count</td>
+          <td>{data.receiveTxCount}</td>
+        </tr>
+        <tr>
+          <td className="cla6">Receive To Count</td>
+          <td>{data.receiveFromCount}</td>
+        </tr>
+        <tr>
+          <td className="cla6" >Balance</td>
+          <td>{data.balance}</td>
+        </tr>
+      
+      
+      
+      </tbody>
+    </table>
+   
+  </div>
+)}
+
+
+    </div>
+    </div>
+  );
 };
 
-const UsersPage = () => {
-	return (
-		<div className='flex-1 overflow-auto relative z-10'>
-			<Header title='Users' />
-
-			<main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
-				{/* STATS */}
-				<motion.div
-					className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8'
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 1 }}
-				>
-					<StatCard
-						name='Total Users'
-						icon={UsersIcon}
-						value={userStats.totalUsers.toLocaleString()}
-						color='#6366F1'
-					/>
-					<StatCard name='New Users Today' icon={UserPlus} value={userStats.newUsersToday} color='#10B981' />
-					<StatCard
-						name='Active Users'
-						icon={UserCheck}
-						value={userStats.activeUsers.toLocaleString()}
-						color='#F59E0B'
-					/>
-					<StatCard name='Churn Rate' icon={UserX} value={userStats.churnRate} color='#EF4444' />
-				</motion.div>
-
-				<UsersTable />
-
-				{/* USER CHARTS */}
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8'>
-					<UserGrowthChart />
-					<UserActivityHeatmap />
-					<UserDemographicsChart />
-				</div>
-			</main>
-		</div>
-	);
-};
-export default UsersPage;
+export default UserPage;
