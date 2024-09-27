@@ -1,4 +1,4 @@
-import { BarChart2, DollarSign, Menu, Settings, ShoppingBag, ShoppingCart, TrendingUp, Users } from "lucide-react";
+import { BarChart2, DollarSign, Menu, Settings, ShoppingBag, ShoppingCart, TrendingUp, Users ,UtilityPole } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -12,9 +12,10 @@ const SIDEBAR_ITEMS = [
 	},
 	{ name: "Transcation-Status", icon: Users,color: "#8B5CF6", href: "/products" },
 	{ name: "Wallet-Status", icon: ShoppingBag,  color: "#EC4899", href: "/users" },
-	{ name: "Investigate", icon: TrendingUp, color: "#10B981", href: "/sales" },
 	
-	{ name: "Analytics", icon: TrendingUp, color: "#3B82F6", href: "/analytics" },
+	{ name: "Investigate", icon: TrendingUp },
+	
+	{ name: "Telegram-Scrapper", icon: UtilityPole, color: "#3B82F6", href: "/analytics" },
 	{ name: "Settings", icon: Settings, color: "#6EE7B7", href: "/settings" },
 ];
 
