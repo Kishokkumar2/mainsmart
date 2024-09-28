@@ -15,7 +15,7 @@ const SIDEBAR_ITEMS = [
 	
 	{ name: "Investigate", icon: TrendingUp },
 	
-	{ name: "Telegram-Scrapper", icon: UtilityPole, color: "#3B82F6", href: "/analytics" },
+	{ name: "Scrapper", icon: UtilityPole, color: "#3B82F6", href: "/analytics" },
 	{ name: "Settings", icon: Settings, color: "#6EE7B7", href: "/settings" },
 ];
 
